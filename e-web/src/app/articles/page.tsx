@@ -15,6 +15,18 @@ type Article = {
   };
 };
 
+function trunkedWords(text: string, addEllipsis: boolean){
+  if(!text) return;
+  const maxWords: number = 50;
+  const words: string[] = text.trim().split(/\s+/);
+
+  if(words.length <= maxWords) return text;
+
+  const result = words.slice(0, maxWords).join(' ');
+
+  return addEllipsis ? result + '...' : result;
+}
+
 export default async function ArticlesPage(){
   const articles: Article[] = await getArticles(); // Diretamente no servidor - assíncrono
 
@@ -25,7 +37,7 @@ export default async function ArticlesPage(){
       {articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.slice(0,3).map((article) => (
-            <div key={article.id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+            <div key={article.id} className="cursor-pointer bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
               <div className="relative w-full h-48">
                 <Image 
                   src={article.image} 
@@ -36,7 +48,7 @@ export default async function ArticlesPage(){
               </div>
               <div className="p-6">
                 <h2 className="text-2xl font-bold mb-2 text-white h-24 overflow-hidden">{article.title}</h2>
-                <p className="text-gray-400 mb-4 h-20 overflow-hidden">{article.content.substring(0, 100)}...</p>
+                <p className="text-gray-400 mb-4 min-h-20 overflow-hidden">{trunkedWords(article.content, true)} Leia mais...</p>
                 <div className="text-right text-sm text-sky-400 flex justify-end items-center gap-4">
                   <span>
                     Por {article.user.name} {article.user.lastname}
