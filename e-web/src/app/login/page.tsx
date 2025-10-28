@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/app/contexts/auth-context';
 import { loginUser, registerUser } from '@/app/services/credential-service';
@@ -16,50 +16,104 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [lastname, setLastname] = useState('');
+  const [cpf, setCpf] = useState('');
+  const [birthdate, setBirthdate] = useState(Date);
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+
+  const handleCpfChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.replace(/[^\d]/g, ''); // Remove tudo que não for dígito
+    const maskedValue = value
+      .slice(0, 11)
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+    setCpf(maskedValue);
+  };
+
+  const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(e.target.files && e.target.files[0]){
+      const file = e.target.files[0];
+      setProfilePicture(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if(previewUrl){
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    setIsLoading(true);
-
     try {
       if (isRegistering) {
-        await registerUser({ name, lastname, email, password });
+        const formData = new FormData();
+        formData.append('name', name);
+        formData.append('lastname', lastname);
+        formData.append('email', email);
+        formData.append('password', password);
+        formData.append('cpf', cpf);
+        formData.append('datebirth', birthdate);
+        if (profilePicture) {
+          formData.append('profilePicture', profilePicture);
+        }
+        await registerUser(formData);
         alert('Registo realizado com sucesso! Faça o login.');
         setIsRegistering(false);
       } else {
         const data = await loginUser({ email, password });
-        login(data.token);
-        router.push('/portal');
+
+        if(data.user && data.token){
+          login(data.token, data.user);
+          router.push('/portal');
+        } else {
+          throw new Error('Resposta de login inválida do servidor.')
+        }
       }
     } catch (err: any) {
       setError(err.message);
-    } finally {
-      setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center text-white p-4">
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-lg shadow-lg">
-        <h1 className="text-3xl font-bold text-center text-white">{isRegistering ? 'Criar Conta' : 'Aceder à Plataforma'}</h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <h1 className="text-3xl font-bold text-center">{isRegistering ? 'Criar Conta' : 'Entrar na plataforma'}</h1>
+        <form onSubmit={handleSubmit} className="space-y-4">
           {isRegistering && (
             <>
-              <input type="text" placeholder="Nome" value={name} onChange={e => setName(e.target.value)} required className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" />
-              <input type="text" placeholder="Apelido" value={lastname} onChange={e => setLastname(e.target.value)} required className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" />
+              {/* Upload da Foto de Perfil */}
+              <div className="flex flex-col items-center space-y-2">
+                <label htmlFor="profilePictureInput" className="cursor-pointer">
+                  <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-gray-600 hover:border-sky-500">
+                    {previewUrl ? (
+                      <img src={previewUrl} alt="Pré-visualização" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-gray-400 text-xs text-center">Foto de Perfil</span>
+                    )}
+                  </div>
+                </label>
+                <input id="profilePictureInput" type="file" accept="image/*" onChange={handlePictureChange} className="hidden" />
+              </div>
+              <input type="text" placeholder="Nome" value={name} onChange={e => setName(e.target.value)} required className="input-user" />
+              <input type="text" placeholder="Sobrenome" value={lastname} onChange={e => setLastname(e.target.value)} required className="input-user" />
+              <input type="text" placeholder="CPF" value={cpf} onChange={handleCpfChange} className="input-user" />
+              <input type="date" value={birthdate} onChange={e => setBirthdate(e.target.value)} required className="input-user" />              
             </>
           )}
-          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" />
-          <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required className="w-full px-4 py-2 bg-gray-700 border border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-500" />
-          <button type="submit" disabled={isLoading} className="w-full py-2 px-4 bg-sky-600 rounded-md hover:bg-sky-700 transition disabled:opacity-50">
-            {isLoading ? 'A processar...' : (isRegistering ? 'Registar' : 'Entrar')}
-          </button>
+          <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required className="input-user" />
+          <input type="password" placeholder="Senha" value={password} onChange={e => setPassword(e.target.value)} required className="input-user" />
+          <button type="submit" className="w-full py-2 px-4 bg-sky-600 rounded-md hover:bg-sky-700 transition">{isRegistering ? 'Registar' : 'Entrar'}</button>
           {error && <p className="text-red-400 text-center">{error}</p>}
         </form>
-        <p className="text-center text-sm text-gray-400">
+        <p className="text-center text-sm">
           {isRegistering ? 'Já tem uma conta?' : 'Não tem uma conta?'}
-          <button onClick={() => setIsRegistering(!isRegistering)} className="ml-2 font-medium text-sky-400 hover:underline">
+          <button onClick={() => { setIsRegistering(!isRegistering); setError(''); }} className="ml-2 text-sky-400 hover:underline">
             {isRegistering ? 'Faça o login' : 'Registe-se'}
           </button>
         </p>

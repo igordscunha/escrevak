@@ -17,6 +17,9 @@ export class Article {
   @Column({ type: "varchar", length: 512, nullable: false })
   image: string;
 
+  @Column({ type: "varchar", length: 255, nullable: false })
+  image_public_id: string;
+
   @Column({ type: "json", nullable: true })
   tags: string[];
 

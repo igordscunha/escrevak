@@ -10,7 +10,7 @@ export default function HeaderComponent() {
 
   const handleLogout = () => {
     logout();
-    router.push('/'); // Redireciona para a home após o logout
+    router.push('/');
   };
 
   return (
@@ -20,7 +20,7 @@ export default function HeaderComponent() {
           Escrevak
         </Link>
         <div className="flex items-center space-x-4">
-          <Link href="/" className="hover:text-sky-400 transition-colors">Home</Link>
+          <Link href="/articles" className='hover:text-sky-400 transition-colors'>Artigos</Link>
           <Link href="/portal" className="hover:text-sky-400 transition-colors">Portal</Link>
           
           {isLoading ? (

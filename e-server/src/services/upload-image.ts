@@ -11,13 +11,13 @@ cloudinary.config({
   secure: true,
 });
 
-export const uploadImage = (fileBuffer: Buffer): Promise<UploadApiResponse> => {
+export const uploadImage = (fileBuffer: Buffer, directory: string): Promise<UploadApiResponse> => {
 
   return new Promise((resolve, reject) => {
 
     const uploadStream = cloudinary.uploader.upload_stream(
 
-      { folder: 'articles_escrevak' },
+      { folder: directory },
       (error, result) => {
         if (error) { reject(error); } 
         else if (result) { resolve(result); }

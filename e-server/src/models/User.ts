@@ -19,13 +19,16 @@ export class User {
   @Column({ type: "varchar", length: 255, nullable: false })
   password: string;
 
-  @Column({ type: "varchar", length: 11, nullable: true })
+  @Column({ type: "varchar", length: 11, nullable: false, unique: true })
   cpf: string;
 
   @Column({ type: "date", nullable: false })
   birth_date: Date;
 
-  @Column({ type: "varchar", length: 512, nullable: true })
+  @Column({ type: "varchar", length: 255, nullable: false })
+  profile_picture_public_id: string;
+
+  @Column({ type: "varchar", length: 512, nullable: false })
   profile_picture: string;
 
   @OneToMany(() => Article, (article) => article.user)
