@@ -19,12 +19,12 @@ export default async function ArticlesPage(){
   const articles: Article[] = await getArticles(); // Diretamente no servidor - assíncrono
 
   return (
-    <div className="min-h-screen container mx-auto px-6 py-12">
+    <div className="min-h-screen container mx-auto px-6 py-24">
       <h1 className="text-4xl font-bold mb-8 text-center text-sky-400">Últimos Artigos</h1>
       
       {articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {articles.map((article) => (
+          {articles.slice(0,3).map((article) => (
             <div key={article.id} className="bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
               <div className="relative w-full h-48">
                 <Image 
