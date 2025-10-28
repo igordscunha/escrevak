@@ -59,24 +59,25 @@ export default function LoginPage() {
         formData.append('password', password);
         formData.append('cpf', cpf);
         formData.append('datebirth', birthdate);
-        if (profilePicture) {
+        if(profilePicture) {
           formData.append('profilePicture', profilePicture);
         }
         await registerUser(formData);
-        alert('Registo realizado com sucesso! Faça o login.');
+        alert('Registo realizado com sucesso!');
         setIsRegistering(false);
       } else {
         const data = await loginUser({ email, password });
 
         if(data.user && data.token){
           login(data.token, data.user);
-          router.push('/portal');
+          router.push('/');
         } else {
           throw new Error('Resposta de login inválida do servidor.')
         }
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (error) {
+      console.error("Erro ao logar/registrar. cod: 31298", error)
+      setError("Ops! Alguma coisa deu errado... Por favor, tente novamente.");
     }
   };
 
@@ -90,11 +91,18 @@ export default function LoginPage() {
               {/* Upload da Foto de Perfil */}
               <div className="flex flex-col items-center space-y-2">
                 <label htmlFor="profilePictureInput" className="cursor-pointer">
-                  <div className="w-24 h-24 rounded-full bg-gray-700 flex items-center justify-center overflow-hidden border-2 border-gray-600 hover:border-sky-500">
+                  <div className="flex items-center min-h-20 justify-center overflow-hidden hover:border-sky-500">
                     {previewUrl ? (
-                      <img src={previewUrl} alt="Pré-visualização" className="w-full h-full object-cover" />
+                      <div className="flex flex-col justify-center items-center">
+                        <div className="w-24 h-24 rounded-full border border-slate-200">
+                          <img src={previewUrl} alt="Pré-visualização" className="w-full h-full rounded-full" />
+                        </div>
+                        <div>
+                          <button className="text-gray-400 hover:text-blue-400 text-xs tracking-wider uppercase" onClick={() => setPreviewUrl(null)}>Apagar</button>
+                        </div>
+                      </div>
                     ) : (
-                      <span className="text-gray-400 text-xs text-center">Foto de Perfil</span>
+                      <span className="text-gray-400 text-xs text-center hover:text-blue-400">Foto de Perfil</span>
                     )}
                   </div>
                 </label>
