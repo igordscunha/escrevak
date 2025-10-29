@@ -16,7 +16,7 @@ export default function HeaderComponent() {
   return (
     <header className="bg-gray-800 text-white shadow-md">
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-sky-400 hover:text-sky-300 transition-colors">
+        <Link href="/" className="text-2xl font-bold text-indigo-200 transition-colors">
           Escrevak
         </Link>
         <div className="flex items-center space-x-4">
