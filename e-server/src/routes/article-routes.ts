@@ -60,10 +60,31 @@ router.get('/articles', async (req: Request, res: Response) => {
 
 router.get('/articles/:id', async (req: Request, res: Response) => {
   try{
-    const articleRepository = AppDataSource.getRepository(Article);
     const article_id = parseInt(req.params.id);
+    if(isNaN(article_id)){
+      return res.status(400).json({ message: "ID do artigo inválido" });
+    }
+
+    const articleRepository = AppDataSource.getRepository(Article);
   
-    const article = await articleRepository.findOneBy({ id: article_id });
+    // QueryBuilder para buscar o artigo E fazer o join com os dados do usuário | se fosse apenas findOneBy() buscaria apenas o artigo
+    const article = await articleRepository.createQueryBuilder("article")
+      .leftJoinAndSelect("article.user", "user")
+      .select([
+        "article.id",
+        "article.title",
+        "article.image",
+        "article.content",
+        "article.tags",
+        "article.created_at",
+        "article.updated_at",
+        "user.id",
+        "user.name",
+        "user.lastname",
+        "user.profile_picture"
+      ])
+      .where("article.id = :id", { id: article_id })
+      .getOne();
 
     if(!article){
       return res.status(404).json("Artigo não encontrado ou não existe.");
