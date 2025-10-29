@@ -1,76 +1,162 @@
 export const LoadingComponent: React.FC = () => {
   return (
-    <>
+    <main className="flex min-h-screen w-full justify-center items-center bg-indigo-200">
       <style>{`
-        /* A animação customizada 'cosmic-rotate' é definida aqui para criar um 
-          efeito único que não está disponível nas classes padrão do Tailwind.
-        */
-        @keyframes cosmic-rotate {
-          0%, 100% {
-            transform: scale(0.9) rotate(0deg);
-            opacity: 0.7;
+        .matrix-loader-wrapper {
+          position: relative;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          overflow: hidden;
+        }
+
+        .matrix-loader {
+          perspective: 1000px;
+        }
+
+        .matrix-loader .cube {
+          width: 90px;
+          height: 90px;
+          position: relative;
+          transform-style: preserve-3d;
+          animation: cubeSpin 12s infinite linear;
+        }
+
+        .matrix-loader .layer {
+          position: absolute;
+          inset: 0;
+          display: grid;
+          grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+          gap: 3px;
+          transform-style: preserve-3d;
+          border: 1px solid #444;
+          background: rgba(255, 255, 255, 0.015);
+          box-shadow: inset 0 0 6px #00f8ff22;
+        }
+
+        .matrix-loader .l1 {
+          transform: translateZ(-20px);
+        }
+        .matrix-loader .l2 {
+          transform: translateZ(0);
+        }
+        .matrix-loader .l3 {
+          transform: translateZ(20px);
+        }
+
+        .matrix-loader .block {
+          width: 26px;
+          height: 26px;
+          border-radius: 3px;
+          transform: translateZ(-80px) scale(0.3);
+          opacity: 0;
+          box-shadow: 0 0 6px #ffffff11;
+          animation: riseIn 3s infinite ease-in-out;
+        }
+
+        .matrix-loader .l1 .block {
+          background: #ff595e;
+        }
+        .matrix-loader .l2 .block {
+          background: #ffca3a;
+        }
+        .matrix-loader .l3 .block {
+          background: #8ac926;
+        }
+
+        .matrix-loader .layer .block:nth-child(1) {
+          animation-delay: 0s;
+        }
+        .matrix-loader .layer .block:nth-child(2) {
+          animation-delay: 0.1s;
+        }
+        .matrix-loader .layer .block:nth-child(3) {
+          animation-delay: 0.2s;
+        }
+        .matrix-loader .layer .block:nth-child(4) {
+          animation-delay: 0.3s;
+        }
+        .matrix-loader .layer .block:nth-child(5) {
+          animation-delay: 0.4s;
+        }
+        .matrix-loader .layer .block:nth-child(6) {
+          animation-delay: 0.5s;
+        }
+        .matrix-loader .layer .block:nth-child(7) {
+          animation-delay: 0.6s;
+        }
+        .matrix-loader .layer .block:nth-child(8) {
+          animation-delay: 0.7s;
+        }
+        .matrix-loader .layer .block:nth-child(9) {
+          animation-delay: 0.8s;
+        }
+
+        @keyframes riseIn {
+          0% {
+            transform: translateZ(-80px) scale(0.3);
+            opacity: 0;
           }
           50% {
-            transform: scale(1.1) rotate(180deg);
+            transform: translateZ(0) scale(1);
             opacity: 1;
           }
+          100% {
+            transform: translateZ(20px) scale(0.5);
+            opacity: 0.4;
+          }
         }
-        .cosmic-cube {
-          animation: cosmic-rotate 3s infinite cubic-bezier(0.45, 0.05, 0.55, 0.95);
-          transform-origin: center;
+
+        @keyframes cubeSpin {
+          0% {
+            transform: rotateX(0deg) rotateY(0deg);
+          }
+          100% {
+            transform: rotateX(360deg) rotateY(360deg);
+          }
         }
       `}</style>
-      <div
-        role="status"
-        aria-label="Carregando"
-        className="flex items-center justify-center w-full min-h-screen bg-gray-700"
-      >
-        <svg
-          viewBox="0 0 100 100"
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-28 h-28"
-        >
-
-          <defs>
-            <linearGradient id="cosmicGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#a855f7" /> {/* Roxo (purple-500) */}
-              <stop offset="50%" stopColor="#ec4899" /> {/* Pink (pink-500) */}
-              <stop offset="100%" stopColor="#f97316" /> {/* Laranja (orange-500) */}
-            </linearGradient>
-          </defs>
-
-          <g>
-            <rect
-              x="35" y="35" width="30" height="30"
-              fill="url(#cosmicGradient)"
-              className="cosmic-cube"
-              style={{ animationDelay: '0s' }}
-              rx="5"
-            />
-            <rect
-              x="35" y="35" width="30" height="30"
-              fill="url(#cosmicGradient)"
-              className="cosmic-cube"
-              style={{ animationDelay: '-0.25s' }}
-              rx="5"
-            />
-            <rect
-              x="35" y="35" width="30" height="30"
-              fill="url(#cosmicGradient)"
-              className="cosmic-cube"
-              style={{ animationDelay: '-0.5s' }}
-              rx="5"
-            />
-             <rect
-              x="35" y="35" width="30" height="30"
-              fill="url(#cosmicGradient)"
-              className="cosmic-cube"
-              style={{ animationDelay: '-0.75s' }}
-              rx="5"
-            />
-          </g>
-        </svg>
+      <div className="matrix-loader-wrapper">
+        <div className="matrix-loader">
+          <div className="cube">
+            <div className="layer l1">
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+            </div>
+            <div className="layer l2">
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+            </div>
+            <div className="layer l3">
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+              <div className="block" />
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </main>
   );
 };
