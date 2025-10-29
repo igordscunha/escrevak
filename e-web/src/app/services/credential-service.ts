@@ -108,3 +108,21 @@ export const getArticles = async () => {
     return [];
   }
 }
+
+export const getArticleById = async (id: string) => {
+  if(!API_BASE_URL) { throw new Error("A variável de ambiente NEXT_PUBLIC_API_BASE_URL não está definida." )};
+
+  try{
+    const response = await fetch(`${API_BASE_URL}/api/articles/${id}`, { cache: 'no-store' });
+
+    if(!response.ok){
+      throw new Error('Falha ao buscar artigo. cod931');
+    }
+
+    return response.json();
+  }
+  catch(error){
+    console.error("Alguma coisa deu errado. cod 09412", error);
+    return;
+  }
+};
