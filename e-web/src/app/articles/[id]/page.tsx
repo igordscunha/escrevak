@@ -32,10 +32,10 @@ export default async function Article({ params }: ArticleProps){
   }
 
   return(
-    <main className="container mx-auto max-w-4xl px-4 py-12">
+    <main className="container mx-auto max-w-4xl px-4 md:px-8 py-12 bg-neutral-50">
       <article>
         {/* Título */}
-        <h1 className="text-4xl lg:text-5xl font-extrabold text-white mb-6 leading-tight">
+        <h1 className="text-4xl lg:text-5xl font-extrabold text-stone-900 mb-6 leading-tight">
           {article.title}
         </h1>
 
@@ -50,16 +50,19 @@ export default async function Article({ params }: ArticleProps){
               className="rounded-full"
             /> 
           ) : (
-            <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-sky-400 font-bold">
+            <div className="w-12 h-12 rounded-full bg-gray-700 flex items-center justify-center text-stone-900 font-bold">
               {article.user.name[0]}
             </div>
           )}
           <div>
-            <p className="font-semibold text-white">
+            <p className="font-semibold text-stone-900">
               Por {article.user.name} {article.user.lastname}
             </p>
-            <p className="text-sm text-gray-400">
+            <p className="text-xs text-stone-500">
               Publicado em {new Date(article.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </p>
+            <p className="text-xs text-stone-500">
+              Última edição em {new Date(article.updated_at).toLocaleDateString('pt-br', { day: '2-digit', month: 'long', year: 'numeric' })}
             </p>
           </div>
         </div>
@@ -76,10 +79,7 @@ export default async function Article({ params }: ArticleProps){
         </div>
 
         {/* Conteúdo do Artigo */}
-        <div className="prose prose-invert prose-lg max-w-none text-gray-300">
-          {/* Usamos 'whitespace-pre-wrap' para respeitar as quebras de linha
-            que o utilizador digitou no <textarea>
-          */}
+        <div className="prose prose-invert prose-lg max-w-none text-stone-900 py-2">
           <p className="whitespace-pre-wrap">
             {article.content}
           </p>
@@ -88,7 +88,7 @@ export default async function Article({ params }: ArticleProps){
         {/* Tags */}
         <div className="mt-12 flex flex-wrap gap-2">
           {article.tags?.map((tag) => (
-            <span key={tag} className="bg-sky-500/20 text-sky-300 px-3 py-1 rounded-full text-sm font-medium">
+            <span key={tag} className="bg-sky-500/20 text-stone-900 px-3 py-1 rounded-full text-sm font-medium">
               {tag}
             </span>
           ))}

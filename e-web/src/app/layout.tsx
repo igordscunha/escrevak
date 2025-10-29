@@ -18,7 +18,7 @@ export default function RootLayout({children}: Readonly<{children: React.ReactNo
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <AuthProvider>
           <HeaderComponent />
-          <main className="bg-gray-700 text-white">
+          <main className="bg-indigo-200 text-white">
             {children}
           </main>
         </AuthProvider>
