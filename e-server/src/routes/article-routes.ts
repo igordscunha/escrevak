@@ -58,6 +58,25 @@ router.get('/articles', async (req: Request, res: Response) => {
   }
 });
 
+router.get('/articles/:id', async (req: Request, res: Response) => {
+  try{
+    const articleRepository = AppDataSource.getRepository(Article);
+    const article_id = parseInt(req.params.id);
+  
+    const article = await articleRepository.findOneBy({ id: article_id });
+
+    if(!article){
+      return res.status(404).json("Artigo não encontrado ou não existe.");
+    }
+
+    return res.status(200).json(article);
+  }
+  catch(error){
+    console.error('[API Error - Fetching Article]', error);
+    return res.status(500).json({ message: 'Ocorreu um erro interno no servidor. cod3095' })
+  }
+});
+
 // -------- // -------- POST -------- // -------- //
 // (já protegida pelo middleware)
 router.post('/articles', protect, upload.single('articleImage'), async (req: AuthenticatedRequest, res: Response) => {
