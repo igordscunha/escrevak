@@ -33,9 +33,10 @@ const upload = multer({ storage });
 router.get('/articles', async (req: Request, res: Response) => {
   try{
     const articleRepository = AppDataSource.getRepository(Article);
+    const searchTerm = req.query.search as string | undefined; // pegar o termo da pesquisa da url (?search...)
 
     // QueryBuilder para selecionar os campos e para fazer o JOIN com a entidade de utilizador.   
-    const articles = await articleRepository.createQueryBuilder("article")
+    let query = articleRepository.createQueryBuilder("article")
       .leftJoinAndSelect("article.user", "user")
       .select([
         "article.id",
@@ -47,7 +48,16 @@ router.get('/articles', async (req: Request, res: Response) => {
         "user.name",
         "user.lastname",
         "user.profile_picture"
-      ]).orderBy("article.created_at", "DESC").getMany();
+      ]).orderBy("article.created_at", "DESC");
+
+    if(searchTerm){
+      query = query.where(
+        `article.title LIKE :term OR JSON_SEARCH(article.tags, 'one', :term) IS NOT NULL`,
+        { term: `%${searchTerm}%` }
+      );
+    }
+
+    const articles = await query.getMany();
      
     return res.status(200).json(articles);  
 
