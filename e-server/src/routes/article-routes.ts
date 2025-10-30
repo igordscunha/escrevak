@@ -52,7 +52,7 @@ router.get('/articles', async (req: Request, res: Response) => {
 
     if(searchTerm){
       query = query.where(
-        `article.title LIKE :term OR JSON_SEARCH(article.tags, 'one', :term) IS NOT NULL`,
+        `article.title LIKE :term OR CAST(article.tags AS CHAR) LIKE :term`,
         { term: `%${searchTerm}%` }
       );
     }
