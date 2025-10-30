@@ -43,7 +43,7 @@ async function apiRequest(endpoint: string, method: string, body: any = null, to
     throw new Error(errorMessage);
   }
   return data;
-}
+};
 
 export const registerUser = (formData: FormData) => {
   if (!API_BASE_URL) {
@@ -91,11 +91,16 @@ export const createArticle = (formData: FormData, token: string) => {
   });
 };
 
-export const getArticles = async () => {
+export const getArticles = async (searchTerm?: string) => {
   if(!API_BASE_URL) { throw new Error("A variável de ambiente NEXT_PUBLIC_API_BASE_URL não está definida." )};
 
+  let apiUrl = `${API_BASE_URL}/api/articles`;
+  if(searchTerm){
+    apiUrl += `?search=${encodeURIComponent(searchTerm)}`;
+  }
+
   try{
-    const response = await fetch(`${API_BASE_URL}/api/articles`, { cache: 'no-store'});
+    const response = await fetch(apiUrl, { cache: 'no-store'});
 
     if(!response.ok){
       throw new Error('Falha ao buscar artigos. cod49')
@@ -107,7 +112,7 @@ export const getArticles = async () => {
     console.error("102 Erro ao buscar artigos: ", error);
     return [];
   }
-}
+};
 
 export const getArticleById = async (id: string) => {
   if(!API_BASE_URL) { throw new Error("A variável de ambiente NEXT_PUBLIC_API_BASE_URL não está definida." )};
