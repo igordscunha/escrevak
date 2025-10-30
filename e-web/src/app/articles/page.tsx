@@ -16,6 +16,34 @@ type Article = {
   };
 };
 
+interface ArticlesPageProps {
+  searchParams?: {
+    search?: string; // parâmetro 'search' da url
+  }
+};
+
+function SearchForm({ initialSearch = ''}: { initialSearch: string }){
+  return(
+    <form action="/articles" method="GET" className="mb-8 w-full max-w-lg mx-auto">
+      <div className="flex rounded-lg shadow-sm border border-gray-700 overflow-hidden">
+        <input
+          type="search"
+          name="search" // O nome 'search' corresponde ao parâmetro esperado pela API
+          placeholder="Procurar artigos por título ou tag..."
+          defaultValue={initialSearch} // Preenche com a pesquisa atual
+          className="flex-grow p-3 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+        />
+        <button
+          type="submit"
+          className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 font-semibold transition-colors"
+        >
+          Procurar
+        </button>
+      </div>
+    </form>    
+  )
+}
+
 function trunkedWords(text: string, addEllipsis: boolean){
   if(!text) return;
   const maxWords: number = 50;
@@ -26,15 +54,19 @@ function trunkedWords(text: string, addEllipsis: boolean){
   const result = words.slice(0, maxWords).join(' ');
 
   return addEllipsis ? result + '...' : result;
-}
+};
 
-export default async function ArticlesPage(){
-  const articles: Article[] = await getArticles(); // Diretamente no servidor - assíncrono
+export default async function ArticlesPage({ searchParams }: ArticlesPageProps){
+  const searchTerm = searchParams?.search || '';
+  const articles: Article[] = await getArticles(searchTerm);
 
   return (
     <div className="min-h-screen container mx-auto px-6 py-24">
       <h1 className="text-4xl font-bold mb-8 text-center text-sky-400">Últimos Artigos</h1>
       
+      {/* Pesquisa */}
+      <SearchForm initialSearch={searchTerm}/>
+
       {articles.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.slice(0,3).map((article) => (
@@ -70,8 +102,8 @@ export default async function ArticlesPage(){
         </div>
       ) : (
         <div className="text-center text-gray-400 mt-20">
-          <h2 className="text-2xl">Nenhum artigo encontrado.</h2>
-          <p>Seja o primeiro a criar um no portal!</p>
+          <h2 className="text-2xl">{searchTerm ? 'Nenhum artigo encontrado para "' + searchTerm + '"' : 'Nenhum artigo encontrado.'}</h2>
+          <p>{searchTerm ? 'Tente uma pesquisa diferente.' : 'Seja o primeiro a criar um no portal!'}</p>
         </div>
       )}
     </div>
