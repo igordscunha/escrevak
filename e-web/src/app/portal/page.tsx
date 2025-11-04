@@ -4,6 +4,7 @@ import { useAuth } from '@/app/contexts/auth-context';
 import React, { useState, useRef, useEffect, JSX } from 'react';
 import { createArticle } from '@/app/services/credential-service';
 import { useRouter } from 'next/navigation';
+import { LoadingComponent } from '../components/LoadingComponent';
 
 const UploadIcon = (): JSX.Element => ( <svg className="w-12 h-12 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg> );
 interface CharacterCounterProps { count: number; max: number }
@@ -13,7 +14,7 @@ function ArticleForm(): JSX.Element {
   const { token } = useAuth();
   const router = useRouter();
   const [title, setTitle] = useState<string>('');
-  const [content, setcontent] = useState<string>('');
+  const [content, setContent] = useState<string>('');
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState<string>('');
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -78,7 +79,7 @@ function ArticleForm(): JSX.Element {
       <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
         <div className="flex flex-col space-y-8">
           <div className="flex flex-col"><label htmlFor="title" className="mb-2 font-semibold text-gray-400">Título do Artigo</label><input id="title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="O Futuro da Inteligência Artificial" className="p-4 bg-gray-800 border-2 border-gray-700 rounded-lg focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-300" required /></div>
-          <div className="flex flex-col flex-grow"><label htmlFor="content" className="mb-2 font-semibold text-gray-400">Conteúdo</label><div className="relative flex-grow"><textarea id="content" value={content} onChange={(e) => setcontent(e.target.value)} maxLength={MAX_CHARS} placeholder="Comece a escrever a sua história aqui..." className="w-full h-full min-h-[300px] p-4 bg-gray-800 border-2 border-gray-700 rounded-lg resize-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-300" required /><div className="absolute bottom-4 right-4"><CharacterCounter count={content.length} max={MAX_CHARS} /></div></div></div>
+          <div className="flex flex-col flex-grow"><label htmlFor="content" className="mb-2 font-semibold text-gray-400">Conteúdo</label><div className="relative flex-grow"><textarea id="content" value={content} onChange={(e) => setContent(e.target.value)} maxLength={MAX_CHARS} placeholder="Comece a escrever a sua história aqui..." className="w-full h-full min-h-[300px] p-4 bg-gray-800 border-2 border-gray-700 rounded-lg resize-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500 outline-none transition-all duration-300" required /><div className="absolute bottom-4 right-4"><CharacterCounter count={content.length} max={MAX_CHARS} /></div></div></div>
           <div className="flex flex-col"><label htmlFor="tags" className="mb-2 font-semibold text-gray-400">Temas / Tags</label><div className="flex flex-wrap items-center p-2 bg-gray-800 border-2 border-gray-700 rounded-lg">{tags.map(tag => (<div key={tag} className="flex items-center bg-sky-500/20 text-sky-300 rounded-full px-3 py-1 text-sm mr-2 mb-2"><span>{tag}</span><button type="button" onClick={() => removeTag(tag)} className="ml-2 text-sky-200 hover:text-white">&times;</button></div>))}<input id="tags" type="text" value={currentTag} onChange={(e) => setCurrentTag(e.target.value)} onKeyDown={handleTagKeyDown} placeholder="Adicionar tema..." className="flex-grow p-2 bg-transparent outline-none min-w-[120px]" /></div></div>
         </div>
         <div className="flex flex-col">
@@ -102,4 +103,24 @@ function ArticleForm(): JSX.Element {
   );
 }
 
-export default function PortalPage(): JSX.Element { return (<div className="min-h-screen flex items-center justify-center py-12 px-4"><ArticleForm /></div>); }
+export default function PortalPage(): JSX.Element {
+
+  const { isAuthenticated, isLoading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if(!isLoading && !isAuthenticated){
+      router.push("/login");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  if(isLoading || !isAuthenticated){
+    return <LoadingComponent />
+  }
+
+  return (
+    <div className="min-h-screen flex items-center justify-center py-12 px-4">
+      <ArticleForm />
+    </div>
+  ); 
+}
