@@ -25,17 +25,17 @@ interface ArticlesPageProps {
 function SearchForm({ initialSearch = ''}: { initialSearch: string }){
   return(
     <form action="/articles" method="GET" className="mb-8 w-full max-w-lg mx-auto">
-      <div className="flex rounded-lg shadow-sm border border-gray-700 overflow-hidden">
+      <div className="flex rounded-lg shadow-sm border border-[#2f3e46] overflow-hidden">
         <input
           type="search"
           name="search" // O nome 'search' corresponde ao parâmetro esperado pela API
           placeholder="Procurar artigos por título ou tag..."
           defaultValue={initialSearch} // Preenche com a pesquisa atual
-          className="flex-grow p-3 bg-gray-800 text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+          className="flex-grow p-3 bg-[#2f3e46] text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
         />
         <button
           type="submit"
-          className="bg-sky-600 hover:bg-sky-700 text-white px-6 py-3 font-semibold transition-colors"
+          className="bg-[#52796F] hover:bg-[#CAD2C5] text-white hover:text-[#52796F] px-6 py-3 font-semibold transition-colors"
         >
           Procurar
         </button>
@@ -62,16 +62,16 @@ export default async function ArticlesPage({ searchParams }: ArticlesPageProps){
 
   return (
     <div className="min-h-screen container mx-auto px-6 py-24">
-      <h1 className="text-4xl font-bold mb-8 text-center text-sky-400">Últimos Artigos</h1>
+      <h1 className="text-4xl font-bold mb-8 text-center text-[#2f3e46]">Últimos Artigos</h1>
       
       {/* Pesquisa */}
       <SearchForm initialSearch={searchTerm}/>
 
       {articles.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 py-16 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {articles.slice(0,3).map((article) => (
             <Link href={`/articles/${article.id}`} key={article.id}>
-              <div key={article.id} className="cursor-pointer bg-gray-800 rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
+              <div key={article.id} className="cursor-pointer bg-[#2f3e46] rounded-lg shadow-lg overflow-hidden transform hover:-translate-y-2 transition-transform duration-300">
                 <div className="relative w-full h-48">
                   <Image 
                     src={article.image} 

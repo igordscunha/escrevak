@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { useAuth } from '../contexts/auth-context';
 import { useRouter } from 'next/navigation';
+import { HeaderDropdownMenu } from './HeaderDropdownMenu';
 
 export default function HeaderComponent() {
   const { isAuthenticated, user, logout, isLoading } = useAuth();
@@ -14,15 +15,21 @@ export default function HeaderComponent() {
   };
 
   return (
-    <header className="bg-gray-800 text-white shadow-md">
-      <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-indigo-200 transition-colors">
+    <header className="relative flex justify-center items-center bg-[#52796F] w-full min-h-20 text-white shadow-lg/20 z-20">
+      <nav className="container mx-auto md:w-2/3 px-6 py-4 flex justify-between items-center">
+        <Link href="/" className="text-lg md:text-2xl font-bold text-[#CAD2C5] transition-colors">
           Escrevak
         </Link>
-        <div className="flex items-center space-x-4">
-          <Link href="/articles" className='hover:text-sky-400 transition-colors'>Artigos</Link>
-          <Link href="/portal" className="hover:text-sky-400 transition-colors">Portal</Link>
-          
+
+        {/* MOBILE */}
+
+        <HeaderDropdownMenu />
+
+        {/* DESKTOP */}
+        <div className="hidden md:flex items-center space-x-4">
+          <Link href="/articles" className="hover:text-[#c0c4bc] transition-colors">Artigos</Link>
+          <Link href="/portal" className="hover:text-[#c0c4bc] transition-colors">Portal</Link>
+
           {isLoading ? (
             <div className="w-24 h-8 bg-gray-700 rounded animate-pulse"></div>
           ) : isAuthenticated ? (
@@ -33,7 +40,7 @@ export default function HeaderComponent() {
               </button>
             </div>
           ) : (
-            <Link href="/login" className="bg-sky-500 hover:bg-sky-600 px-4 py-2 rounded-lg transition-colors">
+            <Link href="/login" className="bg-[#CAD2C5] hover:bg-[#52796F] border border-[#CAD2C5] hover:border hover:border-[#CAD2C5] px-4 py-2 rounded-lg transition-colors">
               Entrar
             </Link>
           )}
