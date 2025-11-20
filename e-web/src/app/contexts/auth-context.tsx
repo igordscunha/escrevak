@@ -3,6 +3,7 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import Cookies from 'js-cookie';
 import { LoadingComponent } from '../components/LoadingComponent';
+import { useRouter } from 'next/navigation';
 
 interface User { 
   id: number; 
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
   // Isso tudo é pra conseguir ler a porcaria do payload do token em utf-8
   useEffect(() => {
@@ -83,6 +85,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(null);
     setToken(null);
     Cookies.remove('authToken');
+    router.push("/");
   };
 
   if(isLoading) {
